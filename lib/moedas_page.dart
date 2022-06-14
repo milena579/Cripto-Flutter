@@ -9,7 +9,7 @@ import 'package:provider/provider.dart';
 import 'moeda.dart';
 
 class MoedasPage extends StatefulWidget {
-  MoedasPage({Key? key}) : super(key: key);
+  const MoedasPage({Key? key}) : super(key: key);
 
   @override
   State<MoedasPage> createState() => _MoedasPageState();
@@ -129,7 +129,8 @@ class _MoedasPageState extends State<MoedasPage> {
                     fontWeight: FontWeight.w500,
                   ),
                 ),
-                if (favoritas.lista.contains(tabela[moeda]))
+                if (favoritas.lista
+                    .any((fav) => fav.sigla == tabela[moeda].sigla))
                   Icon(
                     Icons.circle,
                     color: Color.fromARGB(255, 81, 7, 255),
