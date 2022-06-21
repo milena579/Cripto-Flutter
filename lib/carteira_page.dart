@@ -40,10 +40,7 @@ class _CarteiraPageState extends State<CarteiraPage> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Padding(
-              padding: EdgeInsets.only(
-                top: 48,
-                bottom: 8,
-              ),
+              padding: EdgeInsets.only(top: 48, bottom: 8),
               child: Text(
                 'Valor da Carteira',
                 style: TextStyle(
@@ -60,6 +57,7 @@ class _CarteiraPageState extends State<CarteiraPage> {
               ),
             ),
             loadGrafico(),
+            loadHistorico(),
           ],
         ),
       ),
@@ -99,8 +97,8 @@ class _CarteiraPageState extends State<CarteiraPage> {
       final fontSize = isTouched ? 18.0 : 14.0;
       final radius = isTouched ? 60.0 : 50.0;
       final color = isTouched
-          ? Color.fromARGB(255, 159, 100, 255)
-          : Color.fromARGB(255, 164, 7, 255);
+          ? Color.fromARGB(255, 128, 100, 255)
+          : Color.fromARGB(255, 88, 9, 236);
 
       double porcentagem = 0;
       if (!isSaldo) {
@@ -117,9 +115,10 @@ class _CarteiraPageState extends State<CarteiraPage> {
         title: '${porcentagem.toStringAsFixed(0)}%',
         radius: radius,
         titleStyle: TextStyle(
-            fontSize: fontSize,
-            fontWeight: FontWeight.bold,
-            color: Colors.black87),
+          fontSize: fontSize,
+          fontWeight: FontWeight.bold,
+          color: Colors.black87,
+        ),
       );
     });
   }
@@ -137,28 +136,27 @@ class _CarteiraPageState extends State<CarteiraPage> {
             alignment: Alignment.center,
             children: [
               AspectRatio(
-                aspectRatio: 1,
-                child: PieChart(
-                  PieChartData(
-                    sectionsSpace: 5,
-                    centerSpaceRadius: 110,
-                    sections: loadCarteira(),
-                    pieTouchData: PieTouchData(
-                      touchCallback: (touch) => setState(() {
-                        index = touch.touchedSection!.touchedSectionIndex;
-                        setGraficoDados(index);
-                      }),
+                  aspectRatio: 1,
+                  child: PieChart(
+                    PieChartData(
+                      sectionsSpace: 5,
+                      centerSpaceRadius: 110,
+                      sections: loadCarteira(),
+                      pieTouchData: PieTouchData(
+                          touchCallback: (touch) => setState(() {
+                                index =
+                                    touch.touchedSection!.touchedSectionIndex;
+                                setGraficoDados(index);
+                              })),
                     ),
-                  ),
-                ),
-              ),
+                  )),
               Column(
                 children: [
                   Text(
                     graficoLabel,
                     style: TextStyle(
                       fontSize: 20,
-                      color: Colors.purple,
+                      color: Colors.teal,
                     ),
                   ),
                   Text(
@@ -168,8 +166,27 @@ class _CarteiraPageState extends State<CarteiraPage> {
                     ),
                   ),
                 ],
-              )
+              ),
             ],
           );
+  }
+
+  loadHistorico() {
+    final historico = conta.historico;
+    final date = DateFormat('dd/MM/yyy - hh:mm');
+    List<Widget> widgets = [];
+
+    for (var operacao in historico) {
+      widgets.add(ListTile(
+        title: Text(operacao.moeda.nome),
+        subtitle: Text(date.format(operacao.dataOperacao)),
+        trailing:
+            Text(real.format((operacao.moeda.preco * operacao.quantidade))),
+      ));
+      widgets.add(Divider());
+    }
+    return Column(
+      children: widgets,
+    );
   }
 }
